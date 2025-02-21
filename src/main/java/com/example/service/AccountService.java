@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.example.entity.Account;
 import com.example.exception.AccountNotFoundException;
 import com.example.exception.AlreadyExistsException;
+import com.example.exception.ClientErrorException;
 import com.example.repository.AccountRepository;
 
 @Service
@@ -24,7 +25,7 @@ public class AccountService {
             throw new AlreadyExistsException();
         }
         if (!validateAccountData(account)) {
-            throw new IllegalArgumentException("Client error");
+            throw new ClientErrorException();
         }
 
         return accountRepository.save(account);
