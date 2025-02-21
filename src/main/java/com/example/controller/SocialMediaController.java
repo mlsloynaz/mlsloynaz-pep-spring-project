@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
+import com.example.exception.AccountNotFoundException;
 import com.example.exception.AlreadyExistsException;
 import com.example.service.AccountService;
 
@@ -34,8 +35,18 @@ import com.example.service.AccountService;
             return ResponseEntity.ok(registeredAccount);
         }catch(AlreadyExistsException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }catch(RuntimeException ex){
+        }catch(Exception ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<?> loginAccount(@RequestBody  Account account){
+        try{
+            Account registeredAccount = accountService.loginAccount(account);                                          
+            return ResponseEntity.ok(registeredAccount);
+        }catch(AccountNotFoundException ex){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 

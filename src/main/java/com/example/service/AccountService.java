@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Account;
+import com.example.exception.AccountNotFoundException;
 import com.example.exception.AlreadyExistsException;
 import com.example.repository.AccountRepository;
 
@@ -29,6 +30,14 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    public Account loginAccount(Account account){
+        Account loggedAccount = accountRepository.findByUsernameAndPassword(account.getUsername(), account.getPassword());
+        if(loggedAccount == null){
+            throw new AccountNotFoundException(); 
+        }
+        return loggedAccount;
+    }
+
     private boolean validateAccountData(Account account) {
         String username = account.getUsername();
         String password = account.getPassword();
@@ -37,4 +46,6 @@ public class AccountService {
         }
         return true;
     }
+
+
 }
