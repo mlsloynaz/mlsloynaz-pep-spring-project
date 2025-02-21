@@ -20,9 +20,10 @@ public class MessageService {
     }
 
     public Message createMessage(Message message){
-        Optional<Account> account = accountRepository.findById(message.getPostedBy());
+        Optional<Account> realUser = accountRepository.findById(message.getPostedBy());
+        String messageTxt = message.getMessageText();
 
-        if (validateMessageData(message) && !account.isPresent()){
+        if (validateMessageText(messageTxt) && realUser.isPresent()){
             return messageRepository.save(message);
         }
         throw new ClientErrorException();
@@ -30,8 +31,9 @@ public class MessageService {
 
     public Integer updateMessage(Message message, Integer messageId){
         Optional<Message> found = messageRepository.findById(messageId);
-  
-        if(found.isPresent() && validateMessageData(message)){
+        String messageTxt = message.getMessageText();
+
+        if(found.isPresent() && validateMessageText(messageTxt)){
            message.setMessageId(messageId); 
            messageRepository.save(message); 
           return 1;
@@ -65,9 +67,7 @@ public class MessageService {
         return null;
     }
 
-    private boolean validateMessageData(Message message) {
-      
-        String messageTxt = message.getMessageText();
+    private boolean validateMessageText(String messageTxt) {
 
         if (messageTxt ==  null || messageTxt.length()== 0 || messageTxt.length() > 255 ) {
             return false;
